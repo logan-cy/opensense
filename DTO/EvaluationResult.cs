@@ -2,6 +2,18 @@
 
 public class EvaluationResult
 {
-    public bool IsValid { get; set; }
-    public List<EvaluationIssue> Issues { get; set; } = [];
+    public IReadOnlyList<EvaluationIssue> Issues { get; private set; } = [];
+    public bool IsValid => !Issues.Any();
+
+    internal EvaluationResult() { }
+
+    internal EvaluationResult(IEnumerable<EvaluationIssue> issues)
+    {
+        Issues = issues.OrderBy(i => i.Priority).ToList();
+    }
+
+    internal void Populate(IEnumerable<EvaluationIssue> issues)
+    {
+        Issues = issues.OrderBy(i => i.Priority).ToList();
+    }
 }
