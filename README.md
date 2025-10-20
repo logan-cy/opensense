@@ -7,6 +7,13 @@
 
 OpenSense lets you define logical health checks for your entities in a clear, composable way.
 It’s inspired by autonomic systems — software that can detect, diagnose, and heal its own invariants.
+
+OpenSense offers 2 means by which to check your data; one using mutation of the result object as you
+chain evaluations and one that builds the result object once all of the evaluations are done.
+
+The difference is that without mutation, OpenSense is purely evaluating the data you give it.
+
+### With Mutation
 ``` csharp
 var client = new Client();
 
@@ -17,6 +24,23 @@ EvaluationService
     .Check(c => c.Contract != null, "Client contract missing.", "/clients/contract", 1)
     .Check(c => c.Members.Any(), "No active members found.", "/clients/members", 2)
     .Build(result);
+
+if (!result.IsValid)
+{
+    Console.WriteLine("Client invalid:");
+    foreach (var issue in result.Issues)
+        Console.WriteLine($"- {issue.Message}");
+}
+```
+
+### Without Mutation
+``` csharp
+var client = new Client();
+var result = EvaluationService
+    .Evaluate(client)
+    .Check(c => c.Contract != null, "Client contract missing.", "/clients/contract", 1)
+    .Check(c => c.Members.Any(), "No active members found.", "/clients/members", 2)
+    .Build();
 
 if (!result.IsValid)
 {
