@@ -5,9 +5,9 @@ public class EvaluationResult
     public IReadOnlyList<EvaluationIssue> Issues { get; private set; } = [];
     public bool IsValid => !Issues.Any();
 
-    internal EvaluationResult() { }
+    public EvaluationResult() { }
 
-    internal EvaluationResult(IEnumerable<EvaluationIssue> issues)
+    public EvaluationResult(IEnumerable<EvaluationIssue> issues)
     {
         Issues = issues.OrderBy(i => i.Priority).ToList();
     }
